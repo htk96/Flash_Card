@@ -16,6 +16,7 @@ class TrainsIndex(LoginRequiredMixin, View):
     #     LoginRequiredMixin 로그인 되어 있는지 확인하고 안되어 있으면 러그린 화면으로 가는 class
     login_url = 'login'  # 로그인 페이지 URL 설정
 
+
     def get(self, request):
         user = request.user
         try:
