@@ -1,58 +1,45 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>로그인</title>
-        <link href="css/styles.css" rel="stylesheet" />
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    </head>
-    <body class="bg-primary">
-        <div id="layoutAuthentication_content">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5">
-                        <div class="card shadow-lg border-0 rounded-lg mt-5">
-                            <div class="card-header"><h3 class="text-center font-weight-light my-4">로그인</h3></div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="inputLoginId" type="email" placeholder="name@example.com" />
-                                        <label for="inputLoginId">ID</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" id="inputLoginPassword" type="password" placeholder="Password" />
-                                        <label for="inputLoginPassword">Password</label>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" id="Autocomplete" type="checkbox" value="" />
-                                        <label class="form-check-label" for="Autocomplete">자동완성</label>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                        <a class="small" href="{% url 'id' %}">아이디 찾기</a>
-                                        <a class="small" href="{% url 'password' %}">비밀번호 찾기</a>
-                                        <a class="btn btn-primary" href="index.html">로그인</a>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="card-footer text-center py-3">
-                                <div class="small"><a href="{% url 'index' %}">홈으로</a></div>
-                            </div>
-                            <div class="card-footer text-center py-3">
-                                <div class="small"><a href="{% url 'register' %}">회원가입</a></div>
-                            </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">로그인</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <!-- 아이디 입력 레이블과 필드 -->
+                            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label_tag }}</label>
+                            {{ form.username }}
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <!-- 비밀번호 입력 레이블과 필드 -->
+                            <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label_tag }}</label>
+                            {{ form.password }}
+                        </div>
+                        <div class="mb-3 text-center">
+                            <button class="btn btn-primary" type="submit">로그인</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- 아이디 찾기 버튼 -->
+                <div class="card-footer text-center py-3">
+                    <div class="small"><a href="{% url 'search_id' %}">아이디 찾기</a></div>
+                </div>
+                <!-- 비밀번호 찾기 버튼 -->
+                <div class="card-footer text-center py-3">
+                    <div class="small"><a href="{% url 'find_password' %}">비밀번호 찾기</a></div>
+                </div>
+                <div class="card-footer text-center">
+                    <!-- 회원가입 페이지로 이동하는 링크 -->
+                    <p class="mb-0">아직 계정이 없으신가요? <a href="{% url 'register' %}">회원가입</a></p>
                 </div>
             </div>
         </div>
-<!--        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>-->
-<!--        <script src="js/scripts.js"></script>-->
-    </body>
-</html>
-
-{% endblock content%}
+    </div>
+</div>
+{% endblock content %}
