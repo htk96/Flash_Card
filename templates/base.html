@@ -104,11 +104,8 @@
                 </div>
             </div>
             <div class="sb-sidenav-footer">
-                {% if user.is_authenticated %}
-                환영합니다, {{ user.username }}님! <br>로그인 되었습니다.
-                {% else %}
-                    로그인 후 이용가능
-                {% endif %}
+                <div class="small">{{ user.username }}님</div>
+                반갑습니다.
             </div>
         </nav>
     </div>

@@ -25,9 +25,10 @@ def sign_in(request):
         messages.error(request, f"유효하지 않은 아이디 또는 비밀번호입니다.")
         return render(request, 'users/login.html', {'form': form})
 
-def user_logout(request):
+def logout(request): # 추가 구현 필요
     logout(request)
-    return redirect('login')  # 로그아웃 후 로그인 페이지로 리디렉션
+    messages.success(request, f"You have been logged out")
+    return redirect('login')
 
 def register(request):
     if request.method == "GET":
@@ -61,53 +62,43 @@ def search_id(request):
             messages.error(request, f"입력한 이름과 성에 해당하는 사용자가 없습니다.")  # 에러 메시지 추가
     return render(request,'users/search_id.html', {'id_found': id_found, 'found_id': found_id})
 
-# 사용자 검증과 비밀번호 재설정 함수
-def check_user_and_reset_password(request, user, new_password):
-    form = SetPasswordForm(user, {'new_password1': new_password, 'new_password2': new_password})
-    if form.is_valid():
-        form.save()
-        logout(request)
-        user = authenticate(request, username=user.username, password=new_password)
-        if user:
-            login(request, user)
-            messages.success(request, f"비밀번호가 성공적으로 변경되었습니다. 다시 로그인해주세요.")
-            return redirect('login')
-        else:
-            messages.error(request, f"비밀번호 변경 후 로그인 중 오류가 발생했습니다.")
-            return redirect('login')
-    else:
-        messages.error(request, f"비밀번호 변경 중 오류가 발생했습니다.")
-        return redirect('find_password')
 
-
-# 사용자 검증 함수
-def check_user(request):
+def find_password(request):
     if request.method == "POST":
         username = request.POST.get('username')
         email = request.POST.get('email')
         try:
             user = User.objects.get(username=username, email=email)
-            return render(request, 'users/find_password.html', {'password_found': True, 'user': user})
+            print('1')
+            # 사용자가 존재하면 비밀번호 재설정을 시도합니다
+            if request.POST.get('new_password'):
+                print('2')
+                new_password = request.POST.get('new_password')
+                form = SetPasswordForm(user, {'new_password1': new_password, 'new_password2': new_password})
+                if form.is_valid():
+                    form.save()
+                    # 로그아웃을 수행하여 변경된 비밀번호를 로그인한 사용자에게 적용
+                    logout(request)
+                    user = authenticate(request, username=user.username, password=new_password)
+                    if user:
+                        login(request, user)
+                        messages.success(request, f"비밀번호가 성공적으로 변경되었습니다. 다시 로그인해주세요.")
+                        return redirect('login')  # 로그인 페이지로 리디렉션
+                    else:
+                        messages.error(request, f"비밀번호 변경 후 로그인 중 오류가 발생했습니다.")
+                        return redirect('login')  # 오류 발생 시 로그인 페이지로 리디렉션
+                else:
+                    messages.error(request, f"비밀번호 변경 중 오류가 발생했습니다.")
+            else:
+                # 비밀번호 재설정 폼을 보여줍니다.
+                print('3')
+                return render(request, 'users/find_password.html', {'password_found': True, 'password_changed': False})
         except User.DoesNotExist:
+            print('4')
             messages.error(request, f"해당 이름 또는 이메일로 된 사용자가 없습니다.")
+
+    # 비밀번호 찾기 페이지 또는 로그인 페이지로 이동합니다.
     return render(request, 'users/find_password.html', {'password_found': False})
-
-# 비밀번호 재설정 뷰
-def find_password(request):
-    if request.method == "POST" and request.POST.get('new_password'):
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        try:
-            user = User.objects.get(username=username, email=email)
-            new_password = request.POST.get('new_password')
-            return check_user_and_reset_password(request, user, new_password)
-        except User.DoesNotExist:
-            messages.error(request, f"해당 이름 또는 이메일로 된 사용자가 없습니다.")
-    elif request.method == "POST":
-        return check_user(request)
-    return render(request, 'users/find_password.html', {'password_found': False})
-
-
 
 
 def index(request):
