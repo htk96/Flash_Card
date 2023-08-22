@@ -28,25 +28,26 @@
 
 
                 <div class="card-body">
-                    <form class="form-inline" action="{% url 'trains-show' %}" method="post">
+                    <form class="form-inline" action="{% url 'trains-show' %}"
+                          method="post" onsubmit="return validateForm();">
                         {% csrf_token %}
                         <input type="hidden" name="show_num" value="{{show_num}}">
 
                         <div class="row mb-3">
-                            <label for="train_word_count" class="col-sm-3 col-form-label">영어단어</label>
+                            <label for="train_en_word" class="col-sm-3 col-form-label">영어단어</label>
                             <div class="col-sm-9">
-                                <input type="text" id="train_word_count" name="train_word_count"
-                                       value="{{ config.train_word_count }}"
+                                <input type="text" id="train_en_word" name="train_en_word"
+                                       value="{{ train_word.en_word }}"
                                        class="form-control" placeholder="영어 단어 ({{ train_word.en_word }}) 를 입력하세요"
                                        required>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="train_repeat" class="col-sm-3 col-form-label">단어뜻 1</label>
+                            <label for="train_ko_word_1" class="col-sm-3 col-form-label">단어뜻 1</label>
                             <div class="col-sm-9">
-                                <input type="text" id="train_repeat" name="train_repeat"
-                                       value="{{ config.train_repeat }}"
+                                <input type="text" id="train_ko_word_1" name="train_ko_word_1"
+                                       value="{{ train_word.ko_word_1 }}"
                                        class="form-control" placeholder="첫번째 단어뜻 ({{ train_word.ko_word_1 }}) 을 입력하세요"
                                        required>
                             </div>
@@ -62,4 +63,25 @@
     </div>
 </div>
 
+<script>
+    function validateForm() {
+        var enWordInput = document.getElementById("train_en_word").value;
+        var koWordInput = document.getElementById("train_ko_word_1").value;
+
+        var enWord = "{{ train_word.en_word }}";
+        var koWord = "{{ train_word.ko_word_1 }}";
+
+        if (enWordInput !== enWord) {
+            alert("영어단어와 일치하지 않습니다.");
+            return false; // 폼 제출 차단
+        }
+
+        if (koWordInput !== koWord) {
+            alert("단어뜻이 일치하지 않습니다.");
+            return false; // 폼 제출 차단
+        }
+
+        return true; // 폼 제출 허용
+    }
+</script>
 {% endblock content %}

@@ -6,6 +6,7 @@ from django.forms import model_to_dict
 from django.shortcuts import render
 from django.views import View
 
+from trains.models import Train
 from users.models import Config
 from words.models import Word
 
@@ -13,7 +14,7 @@ from words.models import Word
 # Create your views here.
 class TrainsIndex(LoginRequiredMixin, View):
     #     LoginRequiredMixin 로그인 되어 있는지 확인하고 안되어 있으면 러그린 화면으로 가는 class
-    #     login_url = '/login/'  # 로그인 페이지 URL 설정
+    login_url = 'login'  # 로그인 페이지 URL 설정
 
     def get(self, request):
         user = request.user
@@ -56,12 +57,32 @@ class TrainsIndex(LoginRequiredMixin, View):
         return render(request, 'trains/trains_show.html', context)
 
 
-class TrainsShow(View):
+class TrainsShow(LoginRequiredMixin, View):
+    login_url = 'login'  # 로그인 페이지 URL 설정
+
     def get(self, request):
         return TrainsUtil.get_system_message_render(request, "페이지 접근 오류 ", 'trains-setting')
 
     def post(self, request):
         show_num = int(request.POST.get('show_num'))
+
+        train_en_word = request.POST.get('train_en_word')
+        user = request.user
+        word = Word.objects.get(en_word=train_en_word)
+
+        try:
+            train = Train.objects.get(id_user=user.id, id_word=word.id)
+            train.train_count += 1
+            train.save()
+            print('train update')
+        except ObjectDoesNotExist:
+            train = Train()
+            train.train_count = 1
+            train.id_user = user
+            train.id_word = word
+            train.save()
+            print('train Create')
+
         if show_num < len(TrainsUtil.train_word_list):
             train_word_dict = TrainsUtil.get_train_word_dict(TrainsUtil.train_word_list[show_num])
             context = {'train_word': train_word_dict, 'show_num': show_num + 1}
