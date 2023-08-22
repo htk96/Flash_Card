@@ -105,5 +105,3 @@ def index(request):
     return render(request, 'users/index.html')
 
 
-def home(request):
-    return render(request, 'exams/home.html')

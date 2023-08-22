@@ -59,13 +59,23 @@
                         계정 정보
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
-                         data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="{% url 'Information_Modification' %}">회원정보 수정</a>
-                            <a class="nav-link" href="{% url 'Withdrawal' %}">회원 탈퇴</a>
-                        </nav>
-                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
+                             data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{% url 'Information_Modification' %}">회원정보 수정</a>
+                                <a class="nav-link" href="{% url 'Withdrawal' %}">회원 탈퇴</a>
+                            </nav>
+                        </div>
+                    {% else %}
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
+                             data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="{% url 'login' %}">로그인</a>
+                                <a class="nav-link" href="{% url 'register' %}">회원 가입</a>
+                            </nav>
+                        </div>
+                    {% endif %}
                     <div class="sb-sidenav-menu-heading">단어 연습 관리</div>
                     <a class="nav-link collapsed" href="{% url 'trains-setting' %}">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
