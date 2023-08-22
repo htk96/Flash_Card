@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db import connection
@@ -9,7 +10,9 @@ from words.models import Word
 
 
 # Create your views here.
-class WordList(View):
+class WordList(LoginRequiredMixin, View):
+    login_url = 'login'  # 로그인 페이지 URL 설정
+
     def get(self, request):
         words = Word.objects.all().order_by('-id')
         paginator = Paginator(words, 15)
@@ -30,7 +33,9 @@ class WordList(View):
         return WordUtil.get_system_message_render(request, message, 'words')
 
 
-class WordInput(View):
+class WordInput(LoginRequiredMixin, View):
+    login_url = 'login'  # 로그인 페이지 URL 설정
+
     def get(self, request):
         return render(request, 'words/word_input.html')
 
@@ -57,7 +62,9 @@ class WordInput(View):
             return WordUtil.get_system_message_render(request, find_message, 'word-input')
 
 
-class WordSave(View):
+class WordSave(LoginRequiredMixin, View):
+    login_url = 'login'  # 로그인 페이지 URL 설정
+
     def get(self, request):
         return WordUtil.get_system_message_render(request, "페이지 접근 오류 ", 'word-input')
 
@@ -79,7 +86,9 @@ class WordSave(View):
             return redirect('words')
 
 
-class WordEdit(View):
+class WordEdit(LoginRequiredMixin, View):
+    login_url = 'login'  # 로그인 페이지 URL 설정
+
     def get(self, request, word_id):
         word = get_object_or_404(Word, id=word_id)
         context = {'word': word}
@@ -109,7 +118,9 @@ class WordEdit(View):
         return redirect('words')
 
 
-class WordClear(View):
+class WordClear(LoginRequiredMixin, View):
+    login_url = 'login'  # 로그인 페이지 URL 설정
+
 
     def get(self, request):
         return render(request, 'words/word_clear.html')
